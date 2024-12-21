@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health and Fitness Tracker - Health Metrics</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css' rel='stylesheet'>
+</head>
+
+<body class='bg-gray-100'>
+
+    <header class='bg-green-500 text-white p-4'>
+        <h1 class='text-center text-3xl'>Health and Fitness Tracker</h1>
+        <nav class='mt-2'>
+            <ul class='flex justify-center space-x-4'>
+                <li><a href="/home" class="text-white hover:underline">Home</a></li>
+                <li><a href="" class="text-white hover:underline">Health Metrics</a></li>
+                <li><a href="/goals" class="text-white hover:underline">Fitness Goals</a></li>
+                <li><a href="/recommendations" class="text-white hover:underline">Recommendations</a></li>
+                <li><a href="/tracking" class="text-white hover:underline">Activity Tracking</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class='container mx-auto mt-5 p-5 bg-white rounded shadow-lg'>
+
+        <section id='metrics' class='mb-5'>
+            <h2 class='text-2xl mb-4'>Health Metrics Tracking</h2>
+            <p>Monitoring your health metrics is crucial for understanding your physical condition and tracking your
+                progress over time. Regularly updating these metrics can help you make informed decisions about your
+                health.</p>
+
+            <form id='metricsForm' action="/updatemetrics">
+                <div class="form-group">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" name="weight" class="form-control" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" name="height" class="form-control" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="heartRate">Heart Rate (bpm):</label>
+                    <input type="number" id="heartRate" name="heartRate" class="form-control" required min="0">
+                </div>
+
+                <!-- Additional health metrics -->
+                <div class='form-group'>
+                    <label for='bloodPressure'>Blood Pressure (mmHg):</label>
+                    <input type='text' id='bloodPressure' name='bloodPressure' placeholder='e.g., 120/80'
+                        class='form-control' required pattern='\d{1,3}/\d{1,3}'>
+                </div>
+
+                <button type='submit' class='btn btn-primary'>Update Metrics</button>
+            </form>
+
+            <!-- Display current metrics -->
+            <div id='currentMetrics' class='mt-5'>
+                <h3>Your Current Metrics:</h3>
+                <!-- Placeholder for displaying metrics -->
+                <ul id='metricsList' class='list-disc pl-5'>
+                    <!-- Dynamically generated list of metrics will appear here -->
+                </ul>
+            </div>
+
+        </section>
+
+    </div>
+
+    <footer class='bg-green-500 text-white text-center py-3'>
+        &copy; 2024 Health and Fitness Tracker. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div class="mt-5" style="width: 600px; height: 400px;">
+        <h3>Metrics Over Time</h3>
+        <canvas id="metricsChart" width="400" height="200"></canvas>
+    </div>
+
+
+    <script>
+        document.getElementById('metricsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Collect input values
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // Convert to meters
+            const heartRate = parseInt(document.getElementById('heartRate').value);
+            const bloodPressure = document.getElementById('bloodPressure').value;
+            const [systolic, diastolic] = bloodPressure.split('/').map(Number);
+
+            // Calculate BMI
+            const bmi = (weight / (height ** 2)).toFixed(2);
+            let bmiCategory = '';
+            if (bmi < 18.5) bmiCategory = 'Underweight';
+            else if (bmi < 24.9) bmiCategory = 'Normal weight';
+            else if (bmi < 29.9) bmiCategory = 'Overweight';
+            else bmiCategory = 'Obese';
+
+            // Analyze heart rate
+            let heartRateStatus = '';
+            if (heartRate < 60) heartRateStatus = 'Bradycardia (low)';
+            else if (heartRate <= 100) heartRateStatus = 'Normal';
+            else heartRateStatus = 'Tachycardia (high)';
+
+            // Analyze blood pressure
+            let bloodPressureStatus = '';
+            if (systolic < 120 && diastolic < 80) bloodPressureStatus = 'Normal';
+            else if (systolic < 130 && diastolic < 80) bloodPressureStatus = 'Elevated';
+            else if (systolic < 140 || diastolic < 90) bloodPressureStatus = 'Hypertension Stage 1';
+            else bloodPressureStatus = 'Hypertension Stage 2';
+
+            // Display results
+            const metricsList = document.getElementById('metricsList');
+            metricsList.innerHTML = `
+        <li>BMI: ${bmi} (${bmiCategory})</li>
+        <li>Heart Rate: ${heartRate} bpm (${heartRateStatus})</li>
+        <li>Blood Pressure: ${bloodPressure} (${bloodPressureStatus})</li>
+    `;
+
+            // Additional recommendations
+            // document.getElementById('metrics').appendChild(metricsList);
+            // Additional recommendations
+            if (bmiCategory !== 'Normal weight') {
+                metricsList.innerHTML += `<li>Recommendation: Maintain a balanced diet and regular exercise.</li>`;
+            }
+            if (bloodPressureStatus.includes('Hypertension')) {
+                metricsList.innerHTML += `<li>Recommendation: Monitor your blood pressure regularly and consult a doctor.</li>`;
+            }
+            if (heartRateStatus === 'Bradycardia (low)') {
+                metricsList.innerHTML += `<li>Recommendation: A low heart rate might indicate excellent fitness or a medical condition. If symptomatic, consult a doctor.</li>`;
+            }
+            if (heartRateStatus === 'Tachycardia (high)') {
+                metricsList.innerHTML += `<li>Recommendation: A high heart rate can indicate stress or an underlying condition. Practice relaxation techniques and consult a healthcare provider if persistent.</li>`;
+            }
+
+        });
+
+        // Example: Plotting metrics with smaller canvas and blood pressure
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+
+        // Sample data (replace with actual values over time)
+        const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+        const weightData = [70, 69, 68.5, 68]; // Replace with actual weight data
+        const heartRateData = [72, 75, 78, 76]; // Replace with actual heart rate data
+        const systolicData = [120, 118, 122, 119]; // Replace with systolic blood pressure data
+        const diastolicData = [80, 79, 81, 78]; // Replace with diastolic blood pressure data
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Weight (kg)',
+                        data: weightData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'Heart Rate (bpm)',
+                        data: heartRateData,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'Systolic BP (mmHg)',
+                        data: systolicData,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.4,
+                    },
+                    {
+                        label: 'Diastolic BP (mmHg)',
+                        data: diastolicData,
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        tension: 0.4,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Health Metrics Over Time',
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Value',
+                        },
+                    },
+                },
+            },
+        });
+
+
+    </script>
+</body>
+
+</html>
