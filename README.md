@@ -10,7 +10,7 @@ The backend of the app supports the following key functionalities:
 
 1. **User Authentication and Management**
    - User registration and login using email or social media accounts (Google, Facebook).
-   - Storage of user data like age, weight, and height in a database (SQLite or PostgreSQL).
+   - Storage of user data like age, weight, and height in a database (MongoDB).
 
 2. **Health Metric Tracking**
    - API endpoints to log and manage health metrics (weight, BMI, heart rate, and calories burned).
@@ -45,14 +45,12 @@ The backend of the app supports the following key functionalities:
 
 ---
 
-## Technologies Used
+## Tech Stack
 
-- **Backend Framework:** Python (Flask/Django) or Node.js
-- **Database:** SQLite or PostgreSQL
-- **Push Notifications:** Firebase Cloud Messaging
-- **Authentication:** OAuth 2.0 for social media login
-- **API Development:** RESTful APIs
-- **Data Storage:** Local and server-side integration for offline mode
+- **Frontend:** HTML, CSS, JS  
+- **Backend:** Node.js  
+- **Database:** MongoDB  
+- **APIs:** Third-party APIs for wearable data and health insights  
 
 ---
 
@@ -73,11 +71,4 @@ Here are the main API endpoints implemented in the backend:
 
 ---
 
-## Installation and Setup
 
-To set up and run the backend locally:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/health-fitness-tracker.git
-   cd health-fitness-tracker
