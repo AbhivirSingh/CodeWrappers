@@ -34,20 +34,35 @@
             <div id='workoutRecommendations'>
                 <h3 class='text-xl mb-2'>Recommended Workouts:</h3>
                 <ul class='list-disc pl-5'>
+                    <!-- Sample workouts -->
                     <li>30 minutes of cardio (running, cycling)</li>
                     <li>Strength training (focus on major muscle groups)</li>
                     <li>Yoga or stretching sessions for flexibility</li>
+                    <!-- More workouts can be added dynamically -->
                 </ul>
+
+                <!-- User can add their own workout recommendations -->
+                <form id='addWorkoutForm' class='mt-4'>
+                    <div class='form-group'>
+                        <label for='newWorkout'>Add Your Workout:</label>
+                        <input type='text' id='newWorkout' name='newWorkout' placeholder='e.g., Swimming' required
+                            class='form-control'>
+                    </div>
+                    <button type='submit' class='btn btn-success'>Add Workout</button>
+                </form>
             </div>
 
             <!-- Placeholder for nutrition recommendations -->
             <div id='nutritionRecommendations' class='mt-4'>
                 <h3 class='text-xl mb-2'>Nutrition Tips:</h3>
                 <ul class='list-disc pl-5'>
+                    <!-- Sample nutrition tips -->
                     <li>Eat a balanced diet rich in fruits and vegetables.</li>
                     <li>Stay hydrated; aim for at least 8 glasses of water a day.</li>
                     <li>Limit processed foods and added sugars.</li>
+                    <!-- More tips can be added dynamically -->
                 </ul>
+
             </div>
 
         </section>

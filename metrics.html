@@ -9,28 +9,59 @@
 </head>
 <body class='bg-gray-100'>
 
-    <header class="bg-green-500 text-white p-4">
-        <h1 class="text-center text-3xl">Health and Fitness Tracker</h1>
-        <nav class="mt-2">
-            <ul class="flex justify-center space-x-4">
-                
-                <li><a href="index.html" class="text-white hover:underline">Home</a></li>
-                <li><a href="registration.html" class="text-white hover:underline">Register</a></li>
-                <li><a href="metrics.html" class="text-white hover:underline">Health Metrics</a></li>
-                <li><a href="goals.html" class="text-white hover:underline">Fitness Goals</a></li>
-                <li><a href="recommendations.html" class="text-white hover:underline">Recommendations</a></li>
-                <li><a href="tracking.html" class="text-white hover:underline">Activity Tracking</a></li>
-            </ul>
-        </nav>
-    </header>
+<header class='bg-green-500 text-white p-4'>
+    <h1 class='text-center text-3xl'>Health and Fitness Tracker</h1>
+    <nav class='mt-2'>
+        <ul class='flex justify-center space-x-4'>
+            <li><a href="index.html" class="text-white hover:underline">Home</a></li>
+            <li><a href="registration.html" class="text-white hover:underline">Register</a></li>
+            <li><a href="metrics.html" class="text-white hover:underline">Health Metrics</a></li>
+            <li><a href="goals.html" class="text-white hover:underline">Fitness Goals</a></li>
+            <li><a href="recommendations.html" class="text-white hover:underline">Recommendations</a></li>
+            <li><a href="tracking.html" class="text-white hover:underline">Activity Tracking</a></li>
+        </ul>
+    </nav>
+</header>
 
 <div class='container mx-auto mt-5 p-5 bg-white rounded shadow-lg'>
 
     <section id='metrics' class='mb-5'>
         <h2 class='text-2xl mb-4'>Health Metrics Tracking</h2>
+        <p>Monitoring your health metrics is crucial for understanding your physical condition and tracking your progress over time. Regularly updating these metrics can help you make informed decisions about your health.</p>
+
         <form id='metricsForm'>
-            <!-- Form Fields -->
-        </form> 
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" class="form-control" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" class="form-control" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="heartRate">Heart Rate (bpm):</label>
+                <input type="number" id="heartRate" name="heartRate" class="form-control" required min="0">
+            </div>
+
+            <!-- Additional health metrics -->
+            <div class='form-group'>
+                <label for='bloodPressure'>Blood Pressure (mmHg):</label>
+                <input type='text' id='bloodPressure' name='bloodPressure' placeholder='e.g., 120/80' 
+                       class='form-control' required pattern='\d{1,3}/\d{1,3}'>
+            </div>
+
+            <button type='submit' class='btn btn-primary'>Update Metrics</button>
+        </form>
+
+        <!-- Display current metrics -->
+        <div id='currentMetrics' class='mt-5'>
+            <h3>Your Current Metrics:</h3>
+            <!-- Placeholder for displaying metrics -->
+            <ul id='metricsList' class='list-disc pl-5'>
+                <!-- Dynamically generated list of metrics will appear here -->
+            </ul>
+        </div>
+
     </section>
 
 </div>
@@ -42,4 +73,3 @@
 <script src='script.js'></script> 
 </body>
 </html>
-
