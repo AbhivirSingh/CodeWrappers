@@ -55,12 +55,12 @@ app.get('/', (req, res) => {
 
 app.get('/metrics', async (req, res) => {
     const userFound = await metric.findOne({ email: EL });
-    console.log(userFound);
     res.render("metrics", { userFound });
 });
 
-app.get("/goals", (req, res) => {
-    res.render("goals");
+app.get("/goals", async (req, res) => {
+    const userFound = await metric.findOne({ email: EL });
+    res.render("goals", { userFound });
 })
 
 
