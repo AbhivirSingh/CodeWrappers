@@ -36,22 +36,16 @@ let srch;
 
 const user = mongoose.model("user", userSchema);
 
-const orderSchema = new mongoose.Schema({
-    email: String,
-    orders: [[
-        {
-            description: String,
-            discount: String,
-            img: String,
-            name: String,
-            price: String,
-            prodname: String,
-            qty: Number,
-        },
-    ]],
+const metricSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    weight: [Number],
+    height: [Number],
+    heartRate: [Number],
+    bloodPressure: [String],
 });
 
-const Order = mongoose.model('Order', orderSchema);
+
+const metric = mongoose.model("metric", metricSchema);
 
 let EL = "";
 
@@ -59,82 +53,49 @@ app.get('/', (req, res) => {
     res.render("registration");
 });
 
-app.get('/metrics', (req, res) => {
-    res.render("metrics");
+app.get('/metrics', async (req, res) => {
+    const userFound = await metric.findOne({ email: EL });
+    console.log(userFound);
+    res.render("metrics", { userFound });
 });
 
-app.get("/goals", async (req, res) => {
-    // let myOrders = await Order.findOne({ email: EL });
-
+app.get("/goals", (req, res) => {
     res.render("goals");
 })
 
 
 app.post('/updatemetrics', async (req, res) => {
     const { weight, height, heartRate, bloodPressure } = req.body;
-    try{
-        const userEmail = EL;
-
-        if (!userEmail) {
-            return res.status(404).send('User email not found');
-        } else {
-            const userFound = await Order.findOne({ email: userEmail });
-            if (userFound) {
-                const products = JSON.parse(buyNowCart);
-                userFound.orders.push(products);
-                await orderFound.save();
-            } else {
-                const products = JSON.parse(buyNowCart);
-                let productsArray = [];
-                productsArray.push(products);
-
-                const newOrder = new Order({
-                    email: userEmail,
-                    orders: productsArray,
-                });
-                await newOrder.save();
-            }
-            res.sendStatus(200);
-        }
-    } catch (error) {
-        console.error('Error inserting data into the database:', error);
-        res.status(500).send('Error inserting data into the database');
-    }
-});
-
-app.post('/buyNow', async (req, res) => {
-    const { buyNowCart } = req.body;
-    // console.log('Received data from client:', buyNowCart);
-
-
     try {
-        // Find the user's email from the "user" collection
         const userEmail = EL;
 
         if (!userEmail) {
-            return res.status(404).send('User email not found');
+            return res.status(500).send('Error updating metrics');
         } else {
-            const orderFound = await Order.findOne({ email: userEmail });
-            if (orderFound) {
-                const products = JSON.parse(buyNowCart);
-                orderFound.orders.push(products);
-                await orderFound.save();
+            const userFound = await metric.findOne({ email: userEmail });
+            if (userFound) {
+                userFound.weight.push(weight);
+                userFound.height.push(height);
+                userFound.heartRate.push(heartRate);
+                userFound.bloodPressure.push(bloodPressure);
+                await userFound.save();
             } else {
-                const products = JSON.parse(buyNowCart);
-                let productsArray = [];
-                productsArray.push(products);
-
-                const newOrder = new Order({
+                const newMetric = new metric({
                     email: userEmail,
-                    orders: productsArray,
+                    weight: [weight],
+                    height: [height],
+                    heartRate: [heartRate],
+                    bloodPressure: [bloodPressure],
                 });
-                await newOrder.save();
+                await newMetric.save();
             }
-            res.sendStatus(200);
+            res.status(200).send('Metrics updated successfully');
+
         }
     } catch (error) {
         console.error('Error inserting data into the database:', error);
-        res.status(500).send('Error inserting data into the database');
+        res.status(500).send('Error updating metricse');
+
     }
 });
 
@@ -148,53 +109,6 @@ app.get("/home", (req, res) => {
 app.get("/tracking", (req, res) => {
     res.render("tracking");
 });
-// app.post('/searches', (req, res) => {
-//     const { query } = req.body;
-//     console.log('Search query:', query);
-//     srch=query;
-//     // res.render('searches',{query:srch});
-//     res.render("searches",{query});
-// });
-
-app.post('/search', (req, res) => {
-    const { query } = req.body;
-    // if (query===''){
-    //     res.render('home',{query});
-    // }
-    console.log('Search query:', query);
-    srch = query;
-    // res.render('searches',{query:srch});
-    res.render("searches", { query });
-});
-// app.get("/sign",(req,res)=>{
-//     res.render("login");
-// });
-
-// app.get("/Sign", (req, res) => {
-//     res.render("login", { user: req.user });
-// });
-
-// app.get("/login", (req, res) => {
-//     res.render("login");
-// });
-
-app.get("/success", (req, res) => {
-    res.render("home", { name: req.user.displayName, email: req.user.email[0].value, pic: req.user.photos[0].value });
-});
-
-app.get("/failed", (req, res) => {
-    res.send("You Failed to log in!");
-});
-
-app.get("/logout", (req, res, next) => {
-    EL = '';
-    req.logout(function (err) {
-        if (err) { return next(err); }
-        req.session.destroy();
-        res.redirect("/");
-    });
-});
-
 app.post("/Sign", async (req, res) => {
     let { name, email, password } = req.body;
     let user_email = await user.findOne({ email: email });

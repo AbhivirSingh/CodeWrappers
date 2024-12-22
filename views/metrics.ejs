@@ -32,7 +32,7 @@
                 progress over time. Regularly updating these metrics can help you make informed decisions about your
                 health.</p>
 
-            <form id='metricsForm' action="/updatemetrics">
+            <form id='metricsForm'>
                 <div class="form-group">
                     <label for="weight">Weight (kg):</label>
                     <input type="number" id="weight" name="weight" class="form-control" required min="0">
@@ -57,14 +57,13 @@
             </form>
 
             <!-- Display current metrics -->
-            <div id='currentMetrics' class='mt-5'>
-                <h3>Your Current Metrics:</h3>
-                <!-- Placeholder for displaying metrics -->
-                <ul id='metricsList' class='list-disc pl-5'>
-                    <!-- Dynamically generated list of metrics will appear here -->
-                </ul>
-            </div>
+            <div id="metricsMessage"></div>
+            <ul id="metricsList"></ul>
 
+            <div class="mt-5" style="width: 600px; height: 400px;">
+                <h3>Metrics Over Time</h3>
+                <canvas id="metricsChart" width="400" height="200"></canvas>
+            </div>
         </section>
 
     </div>
@@ -74,14 +73,10 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <div class="mt-5" style="width: 600px; height: 400px;">
-        <h3>Metrics Over Time</h3>
-        <canvas id="metricsChart" width="400" height="200"></canvas>
-    </div>
 
 
     <script>
-        document.getElementById('metricsForm').addEventListener('submit', function (e) {
+        document.getElementById('metricsForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             // Collect input values
@@ -90,6 +85,44 @@
             const heartRate = parseInt(document.getElementById('heartRate').value);
             const bloodPressure = document.getElementById('bloodPressure').value;
             const [systolic, diastolic] = bloodPressure.split('/').map(Number);
+
+            const data = {
+                weight,
+                height,
+                heartRate,
+                bloodPressure,
+            };
+
+            try {
+                // Send POST request to the backend
+                const response = await fetch('/updatemetrics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // Handle response
+                if (response.ok) {
+                    const result = await response.text();
+                    console.log('Response from server:', result);
+
+                    // Optionally display a success message to the user
+                    document.getElementById('metricsMessage').textContent = 'Metrics updated successfully!';
+                    document.getElementById('metricsMessage').style.color = 'green';
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error from server:', errorText);
+                    document.getElementById('metricsMessage').textContent = 'Error updating metrics.';
+                    document.getElementById('metricsMessage').style.color = 'red';
+                }
+            } catch (error) {
+                console.log(error);
+                console.error('Error during fetch:', error);
+                document.getElementById('metricsMessage').textContent = 'An error occurred while updating metrics.';
+                document.getElementById('metricsMessage').style.color = 'red';
+            }
 
             // Calculate BMI
             const bmi = (weight / (height ** 2)).toFixed(2);
@@ -136,17 +169,24 @@
                 metricsList.innerHTML += `<li>Recommendation: A high heart rate can indicate stress or an underlying condition. Practice relaxation techniques and consult a healthcare provider if persistent.</li>`;
             }
 
+
         });
+        const userFound = <%- JSON.stringify(userFound || {}) %>;
 
         // Example: Plotting metrics with smaller canvas and blood pressure
         const ctx = document.getElementById('metricsChart').getContext('2d');
 
         // Sample data (replace with actual values over time)
-        const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-        const weightData = [70, 69, 68.5, 68]; // Replace with actual weight data
-        const heartRateData = [72, 75, 78, 76]; // Replace with actual heart rate data
-        const systolicData = [120, 118, 122, 119]; // Replace with systolic blood pressure data
-        const diastolicData = [80, 79, 81, 78]; // Replace with diastolic blood pressure data
+        const weightData = userFound.weight; // Replace with actual weight data
+        const heartRateData = userFound.heartRate; // Replace with actual heart rate data
+        let systolicData= new Array();
+        let diastolicData= new Array();
+        let labels= new Array();
+
+        for (let i=0;i<userFound.bloodPressure.length;i++){
+            [systolicData[i], diastolicData[i]] = userFound.bloodPressure[i].split('/').map(Number);
+            labels[i] = 'Test '+(i+1);
+        }
 
         new Chart(ctx, {
             type: 'line',
